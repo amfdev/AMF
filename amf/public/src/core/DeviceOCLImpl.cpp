@@ -607,13 +607,17 @@ AMF_RESULT AMFComputeOCLImpl::GetKernel(AMF_KERNEL_ID kernelID, AMFComputeKernel
         );
     *kernel = computeKernel;
     (*kernel)->Acquire();
+	m_kernels.push_back(computeKernel);
 
     return AMF_OK;
 }
 
 AMF_RESULT AMFComputeOCLImpl::PutSyncPoint(AMFComputeSyncPoint** ppSyncPoint)
 {
-    return AMF_NOT_IMPLEMENTED;
+	AMFComputeSyncPointOCLImpl * result = new AMFComputeSyncPointOCLImpl(this);
+	*ppSyncPoint = result;
+	(*ppSyncPoint)->Acquire();
+	return AMF_OK;
 }
 
 AMF_RESULT AMFComputeOCLImpl::FinishQueue()
@@ -691,4 +695,61 @@ AMF_RESULT AMFComputeOCLImpl::CopyPlaneFromHost(void* pSource, const amf_size or
 AMF_RESULT AMFComputeOCLImpl::ConvertPlaneToPlane(AMFPlane* pSrcPlane, AMFPlane** ppDstPlane, AMF_CHANNEL_ORDER order, AMF_CHANNEL_TYPE type)
 {
     return AMF_NOT_IMPLEMENTED;
+}
+
+amf_vector<cl_event> AMFComputeOCLImpl::GetKernelEvents()
+{
+	amf_vector<cl_event> result;
+	for (int i = 0; i < m_kernels.size(); i++)
+	{
+		AMFComputeKernelOCL * kernel = reinterpret_cast<AMFComputeKernelOCL *>(m_kernels.at(i).GetPtr());
+		result.push_back(kernel->GetEvent());
+	}
+	return result;
+}
+
+AMFComputeSyncPointOCLImpl::AMFComputeSyncPointOCLImpl(AMFComputeOCLImpl * compute) : m_compute(compute)
+{
+	int ret = 0;
+	m_event = clCreateUserEvent((cl_context)m_compute->GetNativeContext(), &ret);
+	if (ret != CL_SUCCESS)
+	{
+		amf::AMFTraceW(AMF_UNICODE(__FILE__), __LINE__, AMF_TRACE_TEST, L"AMFComputeSyncPointOCLImpl", 0, L"failed to create event");
+	}
+	amf_vector<cl_event> events = m_compute->GetKernelEvents();
+	
+	ret = clEnqueueMarkerWithWaitList(cl_command_queue(	m_compute->GetNativeCommandQueue()),
+														events.size(),
+														events.data(),
+														&m_event);
+	if (ret != CL_SUCCESS)
+	{
+		amf::AMFTraceW(AMF_UNICODE(__FILE__), __LINE__, AMF_TRACE_TEST, L"AMFComputeSyncPointOCLImpl", 0, L"failed to clEnqueueMarkerWithWaitList");
+	}
+}
+
+AMFComputeSyncPointOCLImpl::~AMFComputeSyncPointOCLImpl()
+{
+	clReleaseEvent(m_event);
+}
+
+amf_bool AMFComputeSyncPointOCLImpl::IsCompleted()
+{
+	cl_int ret = 0;
+	cl_int result = 0;
+	ret = clGetEventInfo(m_event, CL_EVENT_COMMAND_EXECUTION_STATUS,
+	sizeof(result), &result, NULL);
+	if ((ret == CL_SUCCESS) && (result == CL_COMPLETE))
+		return true;
+	return false;
+}
+
+void AMFComputeSyncPointOCLImpl::Wait()
+{
+	cl_int ret = 0;
+	ret = clWaitForEvents(1, &m_event);
+	if (ret != CL_SUCCESS)
+	{
+		amf::AMFTraceW(AMF_UNICODE(__FILE__), __LINE__, AMF_TRACE_TEST, L"AMFComputeSyncPointOCLImpl", 0, L"failed to clWaitForEvents");
+	}
 }

@@ -81,9 +81,22 @@ public:
     virtual AMF_RESULT CopyPlaneToHost(AMFPlane* pSrcPlane, const amf_size origin[], const amf_size region[], void* pDest, amf_size dstPitch, amf_bool blocking) override;
     virtual AMF_RESULT CopyPlaneFromHost(void* pSource, const amf_size origin[], const amf_size region[], amf_size srcPitch, AMFPlane* pDstPlane, amf_bool blocking) override;
     virtual AMF_RESULT ConvertPlaneToPlane(AMFPlane* pSrcPlane, AMFPlane** ppDstPlane, AMF_CHANNEL_ORDER order, AMF_CHANNEL_TYPE type) override;
-
+	amf_vector<cl_event> GetKernelEvents();
 private:
     AMFDeviceOCLImpl *  m_device;
+	amf_vector<AMFComputeKernelPtr> m_kernels;
+};
+
+class AMFComputeSyncPointOCLImpl : public AMFInterfaceImpl <AMFComputeSyncPoint>
+{
+public:
+	AMFComputeSyncPointOCLImpl(AMFComputeOCLImpl *  compute);
+	~AMFComputeSyncPointOCLImpl();
+	virtual amf_bool            AMF_STD_CALL IsCompleted();
+	virtual void                AMF_STD_CALL Wait();
+private:
+	AMFComputeOCLImpl * m_compute;
+	cl_event m_event;
 };
 
 #endif // DEVICEOCLIMPL_H

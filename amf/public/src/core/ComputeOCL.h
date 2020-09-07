@@ -34,6 +34,7 @@ public:
     virtual AMF_RESULT          AMF_STD_CALL GetCompileWorkgroupSize(amf_size workgroupSize[3]);
 
     virtual AMF_RESULT          AMF_STD_CALL Enqueue(amf_size dimension, amf_size globalOffset[3], amf_size globalSize[3], amf_size localSize[3]);
+	cl_event					GetEvent();
 private:
     AMF_KERNEL_ID m_kernelID;
     cl_kernel m_kernel;
@@ -41,6 +42,7 @@ private:
     cl_program m_program;
     cl_command_queue m_command_queue;
     cl_device_id m_deviceID;
+	cl_event m_event;
 };
 
 class AMFComputeFactoryOCL : public AMFInterfaceImpl<AMFComputeFactory>

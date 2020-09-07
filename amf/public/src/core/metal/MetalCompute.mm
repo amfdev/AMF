@@ -55,7 +55,7 @@ AMF_RESULT MetalCompute::GetKernel(NSString * source, NSString * name, MetalComp
 
 AMF_RESULT MetalCompute::FlushQueue()
 {
-    [m_commandBuffer commit];
+    //[m_commandBuffer commit];
     for (id<MTLCommandBuffer> buffer in m_kernelBuffers)
     {
         [buffer commit];
@@ -65,7 +65,7 @@ AMF_RESULT MetalCompute::FlushQueue()
 
 AMF_RESULT MetalCompute::FinishQueue()
 {
-    [m_commandBuffer waitUntilCompleted];
+    //[m_commandBuffer waitUntilCompleted];
     for (id<MTLCommandBuffer> buffer in m_kernelBuffers)
     {
         [buffer waitUntilCompleted];

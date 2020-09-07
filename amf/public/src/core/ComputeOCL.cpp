@@ -140,7 +140,7 @@ void *AMFComputeKernelOCL::GetNative()
 AMF_RESULT AMFComputeKernelOCL::Enqueue(amf_size dimension, amf_size globalOffset[], amf_size globalSize[], amf_size localSize[])
 {
     int err = 0;
-    err = clEnqueueNDRangeKernel(m_command_queue, m_kernel, dimension, &globalOffset[0], &globalSize[0], &localSize[0], 0, NULL, NULL);
+    err = clEnqueueNDRangeKernel(m_command_queue, m_kernel, dimension, &globalOffset[0], &globalSize[0], &localSize[0], 0, NULL, &m_event);
     if (err)
     {
         printf("Error: Failed to execute kernel!\n", err);
@@ -253,12 +253,22 @@ const wchar_t *AMFComputeKernelOCL::GetIDName()
 AMFComputeKernelOCL::AMFComputeKernelOCL(cl_program program, cl_kernel kernel, cl_command_queue command_queue, AMF_KERNEL_ID kernelID, cl_device_id deviceID, cl_context context)
     : m_program (program), m_kernel(kernel), m_kernelID(kernelID), m_command_queue(command_queue), m_deviceID(deviceID), m_context(context)
 {
-
-
+	int err = 0;
+	m_event = clCreateUserEvent(m_context, &err);
+	if (err != 0)
+	{
+		amf::AMFTraceW(AMF_UNICODE(__FILE__), __LINE__, AMF_TRACE_TEST, L"AMFComputeKernelOCL", 0, L"failed to create event");
+	}
 }
 
 AMFComputeKernelOCL::~AMFComputeKernelOCL()
 {
 	clReleaseProgram(m_program);
 	clReleaseKernel(m_kernel);
+	clReleaseEvent(m_event);
+}
+
+cl_event AMFComputeKernelOCL::GetEvent()
+{
+	return m_event;
 }

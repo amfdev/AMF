@@ -120,14 +120,20 @@ int main(int argc, char *argv[])
 
         pKernel->Enqueue(1, offset, sizeGlobal, sizeLocal);
         pCompute->FlushQueue();
-        pCompute->FinishQueue();
+        //pCompute->FinishQueue();
+		amf::AMFComputeSyncPointPtr pSync;
+		res = pCompute->PutSyncPoint(&pSync);
+		printf("\nSync completed = %s\n", pSync->IsCompleted() ? "true" : "false");
+		pSync->Wait();
+		printf("Sync completed = %s\n", pSync->IsCompleted() ? "true" : "false");
+
 		float  *outputData2 = NULL;
 		res = output->MapToHost((void**)&outputData2, 0, 1024 * sizeof(float), true);
 
 
         for (int k = 0; k < 1024; k++ )
         {
-            printf("result[%d] = %f ", k, outputData2[k]);
+            printf("result[%d] = %f \n", k, outputData2[k]);
         }
 
 		output->Convert(amf::AMF_MEMORY_HOST);
