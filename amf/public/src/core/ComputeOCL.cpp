@@ -232,12 +232,10 @@ AMF_RESULT AMFComputeKernelOCL::SetArgBuffer(amf_size index, AMFBuffer *pBuffer,
 
     if (pBuffer->GetMemoryType() != AMF_MEMORY_OPENCL)
     {
-        res =  pBuffer->Convert(AMF_MEMORY_OPENCL);
-        if (res != AMF_OK)
-        {
-            printf("Error: Failed to Convert arg buffer to OpenCl memory!\n index = %d", err, index);
-            return AMF_FAIL;
-        }
+        AMF_RETURN_IF_FAILED(
+            pBuffer->Convert(AMF_MEMORY_OPENCL),
+            L"Error: Failed to Convert arg buffer to OpenCl memory!"
+            );
     }
 
     return SetArgBufferNative(index, pBuffer->GetNative(), eAccess);
