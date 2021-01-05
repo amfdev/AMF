@@ -1,4 +1,4 @@
-// 
+//
 // Notice Regarding Standards.  AMD does not provide a license or sublicense to
 // any Intellectual Property Rights relating to any standards, including but not
 // limited to any audio and/or video codec technologies such as MPEG-2, MPEG-4;
@@ -6,9 +6,9 @@
 // (collectively, the "Media Technologies"). For clarity, you will pay any
 // royalties due for such third party technologies, which may include the Media
 // Technologies that are owed as a result of AMD providing the Software to you.
-// 
-// MIT license 
-// 
+//
+// MIT license
+//
 // Copyright (c) 2018 Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -102,13 +102,13 @@ namespace amf
 
         // interface
         //-------------------------------------------------------------------------------------------------
-        virtual AMF_RESULT  AMF_STD_CALL Clear()
+        virtual AMF_RESULT  AMF_STD_CALL Clear() override
         {
             m_PropertyValues.clear();
             return AMF_OK;
         }
         //-------------------------------------------------------------------------------------------------
-        virtual AMF_RESULT  AMF_STD_CALL AddTo(AMFPropertyStorage* pDest, bool overwrite, bool deep) const
+        virtual AMF_RESULT  AMF_STD_CALL AddTo(AMFPropertyStorage* pDest, bool overwrite, bool deep) const override
         {
             deep;
             AMF_RETURN_IF_INVALID_POINTER(pDest);
@@ -151,7 +151,7 @@ namespace amf
             return AMF_OK;
         }
         //-------------------------------------------------------------------------------------------------
-        virtual AMF_RESULT  AMF_STD_CALL CopyTo(AMFPropertyStorage* pDest, bool deep) const
+        virtual AMF_RESULT  AMF_STD_CALL CopyTo(AMFPropertyStorage* pDest, bool deep) const override
         {
             AMF_RETURN_IF_INVALID_POINTER(pDest);
 
@@ -166,7 +166,7 @@ namespace amf
             }
         }
         //-------------------------------------------------------------------------------------------------
-        virtual AMF_RESULT  AMF_STD_CALL SetProperty(const wchar_t* name, AMFVariantStruct value)
+        virtual AMF_RESULT  AMF_STD_CALL SetProperty(const wchar_t* name, AMFVariantStruct value) override
         {
             AMF_RETURN_IF_INVALID_POINTER(name);
 
@@ -184,7 +184,7 @@ namespace amf
             return SetPrivateProperty(name, value);
         }
         //-------------------------------------------------------------------------------------------------
-        virtual AMF_RESULT  AMF_STD_CALL GetProperty(const wchar_t* name, AMFVariantStruct* pValue) const
+        virtual AMF_RESULT  AMF_STD_CALL GetProperty(const wchar_t* name, AMFVariantStruct* pValue) const override
         {
             AMF_RETURN_IF_INVALID_POINTER(name);
             AMF_RETURN_IF_INVALID_POINTER(pValue);
@@ -203,7 +203,7 @@ namespace amf
             return GetPrivateProperty(name, pValue);
         }
         //-------------------------------------------------------------------------------------------------
-        virtual bool        AMF_STD_CALL HasProperty(const wchar_t* name) const
+        virtual bool        AMF_STD_CALL HasProperty(const wchar_t* name) const override
         {
             const AMFPropertyInfo* pParamInfo = NULL;
             AMF_RESULT err = GetPropertyInfo(name, &pParamInfo);
@@ -214,12 +214,12 @@ namespace amf
             return true;
         }
         //-------------------------------------------------------------------------------------------------
-        virtual amf_size    AMF_STD_CALL GetPropertyCount() const
+        virtual amf_size    AMF_STD_CALL GetPropertyCount() const override
         {
             return m_PropertyValues.size();
         }
         //-------------------------------------------------------------------------------------------------
-        virtual AMF_RESULT  AMF_STD_CALL GetPropertyAt(amf_size index, wchar_t* name, amf_size nameSize, AMFVariantStruct* pValue) const
+        virtual AMF_RESULT  AMF_STD_CALL GetPropertyAt(amf_size index, wchar_t* name, amf_size nameSize, AMFVariantStruct* pValue) const override
         {
             AMF_RETURN_IF_INVALID_POINTER(name);
             AMF_RETURN_IF_INVALID_POINTER(pValue);
@@ -244,12 +244,12 @@ namespace amf
             return AMF_OK;
         }
         //-------------------------------------------------------------------------------------------------
-        virtual amf_size    AMF_STD_CALL GetPropertiesInfoCount() const
+        virtual amf_size    AMF_STD_CALL GetPropertiesInfoCount() const override
         {
             return m_szPropertiesInfoCount;
         }
         //-------------------------------------------------------------------------------------------------
-        virtual AMF_RESULT  AMF_STD_CALL GetPropertyInfo(amf_size szInd, const AMFPropertyInfo** ppParamInfo) const
+        virtual AMF_RESULT  AMF_STD_CALL GetPropertyInfo(amf_size szInd, const AMFPropertyInfo** ppParamInfo) const override
         {
             AMF_RETURN_IF_INVALID_POINTER(ppParamInfo);
 
@@ -257,7 +257,7 @@ namespace amf
             return AMF_OK;
         }
         //-------------------------------------------------------------------------------------------------
-        virtual AMF_RESULT  AMF_STD_CALL GetPropertyInfo(const wchar_t* name, const AMFPropertyInfo** ppParamInfo) const
+        virtual AMF_RESULT  AMF_STD_CALL GetPropertyInfo(const wchar_t* name, const AMFPropertyInfo** ppParamInfo) const override
         {
             AMF_RETURN_IF_INVALID_POINTER(name);
             AMF_RETURN_IF_INVALID_POINTER(ppParamInfo);
@@ -273,7 +273,7 @@ namespace amf
             return AMF_NOT_FOUND;
         }
         //-------------------------------------------------------------------------------------------------
-        virtual AMF_RESULT  AMF_STD_CALL ValidateProperty(const wchar_t* name, AMFVariantStruct value, AMFVariantStruct* pOutValidated) const
+        virtual AMF_RESULT  AMF_STD_CALL ValidateProperty(const wchar_t* name, AMFVariantStruct value, AMFVariantStruct* pOutValidated) const override
         {
             AMF_RETURN_IF_INVALID_POINTER(name);
             AMF_RETURN_IF_INVALID_POINTER(pOutValidated);
@@ -337,9 +337,9 @@ namespace amf
         //-------------------------------------------------------------------------------------------------
         virtual void        AMF_STD_CALL OnPropertyChanged(const wchar_t* name){ name; }
         //-------------------------------------------------------------------------------------------------
-        virtual void        AMF_STD_CALL AddObserver(AMFPropertyStorageObserver* pObserver) { AMFObservableImpl<AMFPropertyStorageObserver>::AddObserver(pObserver); }
+        virtual void        AMF_STD_CALL AddObserver(AMFPropertyStorageObserver* pObserver) override { AMFObservableImpl<AMFPropertyStorageObserver>::AddObserver(pObserver); }
         //-------------------------------------------------------------------------------------------------
-        virtual void        AMF_STD_CALL RemoveObserver(AMFPropertyStorageObserver* pObserver) { AMFObservableImpl<AMFPropertyStorageObserver>::RemoveObserver(pObserver); }
+        virtual void        AMF_STD_CALL RemoveObserver(AMFPropertyStorageObserver* pObserver) override { AMFObservableImpl<AMFPropertyStorageObserver>::RemoveObserver(pObserver); }
         //-------------------------------------------------------------------------------------------------
     protected:
         //-------------------------------------------------------------------------------------------------

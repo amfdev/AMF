@@ -1,4 +1,4 @@
-// 
+//
 // Notice Regarding Standards.  AMD does not provide a license or sublicense to
 // any Intellectual Property Rights relating to any standards, including but not
 // limited to any audio and/or video codec technologies such as MPEG-2, MPEG-4;
@@ -6,9 +6,9 @@
 // (collectively, the "Media Technologies"). For clarity, you will pay any
 // royalties due for such third party technologies, which may include the Media
 // Technologies that are owed as a result of AMD providing the Software to you.
-// 
-// MIT license 
-// 
+//
+// MIT license
+//
 // Copyright (c) 2018 Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -47,7 +47,7 @@ namespace amf
 {
     //---------------------------------------------------------------------------------------------
     template<typename _TBase> class AMFPropertyStorageImpl :
-        public _TBase, 
+        public _TBase,
         public AMFObservableImpl<AMFPropertyStorageObserver>
     {
     public:
@@ -163,7 +163,7 @@ namespace amf
                 AMF_RETURN_IF_FAILED(err, L"AddTo() - failed to copy property=%s", it->first.c_str());
             }
             return AMF_OK;
-        }        
+        }
         //-------------------------------------------------------------------------------------------------
         virtual AMF_RESULT  AMF_STD_CALL CopyTo(AMFPropertyStorage* pDest, bool deep) const
         {
@@ -184,9 +184,9 @@ namespace amf
             name;
         }
         //-------------------------------------------------------------------------------------------------
-        virtual void        AMF_STD_CALL AddObserver(AMFPropertyStorageObserver* pObserver) { AMFObservableImpl<AMFPropertyStorageObserver>::AddObserver(pObserver); }
+        virtual void        AMF_STD_CALL AddObserver(AMFPropertyStorageObserver* pObserver) override { AMFObservableImpl<AMFPropertyStorageObserver>::AddObserver(pObserver); }
         //-------------------------------------------------------------------------------------------------
-        virtual void        AMF_STD_CALL RemoveObserver(AMFPropertyStorageObserver* pObserver) { AMFObservableImpl<AMFPropertyStorageObserver>::RemoveObserver(pObserver); }
+        virtual void        AMF_STD_CALL RemoveObserver(AMFPropertyStorageObserver* pObserver) override { AMFObservableImpl<AMFPropertyStorageObserver>::RemoveObserver(pObserver); }
         //-------------------------------------------------------------------------------------------------
     protected:
         //-------------------------------------------------------------------------------------------------
