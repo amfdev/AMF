@@ -79,10 +79,10 @@ if(OpenCL_INCLUDE_DIR AND (OpenCL_LIBRARIES OR AMF_CORE_STATIC))
 
   #test the ${OpenCL_INCLUDE_DIR} is not an absolute path
   if(NOT IS_ABSOLUTE ${OpenCL_INCLUDE_DIR})
-    #test amf are included from other project
+    #test amf is included from other project
     if(NOT ${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
       get_filename_component(Path_To_OpenCL "${CMAKE_SOURCE_DIR}/${OpenCL_INCLUDE_DIR}" ABSOLUTE)
-    #assume that amf are builden from itself
+    #assume that amf is buit from itself
     else()
       get_filename_component(Path_To_OpenCL "${CMAKE_CURRENT_SOURCE_DIR}/${OpenCL_INCLUDE_DIR}" ABSOLUTE)
     endif()
