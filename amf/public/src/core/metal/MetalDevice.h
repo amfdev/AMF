@@ -4,7 +4,6 @@
 #include "MetalCompute.h"
 #include "../../../include/core/Result.h"
 
-
 class MetalDevice
 {
 public:

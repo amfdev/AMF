@@ -10,9 +10,7 @@
 
 #include <iostream>
 
-
-using namespace amf; 
-
+using namespace amf;
 
 struct WStrCompare : public std::binary_function<const wchar_t*, const wchar_t*, bool> {
 public:
@@ -61,6 +59,7 @@ public:
 
     virtual const wchar_t* const AMF_STD_CALL GetSampleFormatName(const AMF_AUDIO_FORMAT eFormat);
     virtual AMF_AUDIO_FORMAT    AMF_STD_CALL GetSampleFormatByName(const wchar_t* name);
+
 private:
 	struct AMFTraceWriterEx
 	{
@@ -71,20 +70,17 @@ private:
 		std::map<const wchar_t*, amf_int32, WStrCompare> levels;
 	};
 private:
-	const wchar_t* const GetWriterLevelName(amf_int32 level);
-	wchar_t * FormMessage(amf_int32 level, const wchar_t *src_path, amf_int32 line, const wchar_t *message, va_list *pArglist);
+	std::wstring GetWriterLevelName(amf_int32 level);
+	std::wstring FormMessage(amf_int32 level, const wchar_t *srcPath, amf_int32 line, const wchar_t *message, va_list *pArglist);
 	bool CheckLevel(int current, int traceLevel);
 	AMFTraceWriterEx * WriterByName(const wchar_t* name);
-private:
-	
 
 	AMFFileTraceWriter m_fileWriter;
 	AMFConsoleTraceWriter m_consoleWriter;
 	AMFTraceWriterEx m_consoleEx;
 
-	
 	std::map<const wchar_t*, AMFTraceWriterEx, WStrCompare> m_writers;
-	
+
 	amf_int32 m_level;
 	amf_int32 m_indent;
 };

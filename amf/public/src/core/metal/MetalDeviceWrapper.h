@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../../../include/core/Result.h"
 #include "MetalComputeWrapper.h"
 
@@ -7,8 +8,8 @@ class MetalDevice;
 class MetalDeviceWrapper
 {
 public:
-
     MetalDeviceWrapper(void * native);
+    ~MetalDeviceWrapper();
 
     void * AllocateBuffer(size_t size);
     AMF_RESULT ReleaseBuffer(void * native);
@@ -21,6 +22,7 @@ public:
     AMF_RESULT CreateSubBuffer(void* pHandle, void ** subBuffer, amf_size offset, amf_size size);
     AMF_RESULT FillBuffer(void *pDestHandle, amf_size dstOffset, amf_size dstSize, const void *pSourcePattern, amf_size patternSize);
     void * GetNativeDevice();
+
 private:
-    MetalDevice * m_device;
+    MetalDevice *mDevice = nullptr;
 };

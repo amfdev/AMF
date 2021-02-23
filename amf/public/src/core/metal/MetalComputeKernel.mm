@@ -93,13 +93,13 @@ AMF_RESULT MetalComputeKernel::Enqueue(MTLSize workgroupSize, MTLSize sizeInWork
         [commandBuffer addScheduledHandler:
             ^(id<MTLCommandBuffer> commandBuffer)
             {
-                NSLog(@"scheduled");
+                //NSLog(@"scheduled");
             }
             ];
         [commandBuffer addCompletedHandler:
             ^(id<MTLCommandBuffer> commandBuffer)
             {
-                NSLog(@"completed");
+                //NSLog(@"completed");
             }
             ];
 

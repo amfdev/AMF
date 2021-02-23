@@ -462,71 +462,59 @@ amf_int32 AMFTraceImpl::SetGlobalLevel(amf_int32 level)
     return prev;
 }
 
-const wchar_t * const AMFTraceImpl::GetWriterLevelName(amf_int32 level)
+std::wstring AMFTraceImpl::GetWriterLevelName(amf_int32 level)
 {
-	switch (level)
-	{
-	case AMF_TRACE_ERROR:
-		return L"Error: ";
-	case AMF_TRACE_WARNING:
-		return L"Warning: ";
-	case AMF_TRACE_INFO:
-		return L"Info: ";
-	case AMF_TRACE_DEBUG:
-		return L"Debug: ";
-	case AMF_TRACE_TRACE:
-		return L"Trace: ";
-	case AMF_TRACE_TEST:
-		return L"Test: ";
-	}
+	static std::map<amf_int32, std::wstring> levelNames = {
+		{1, L"Error: "},
+		{2, L"Warning: "},
+		{3, L"Info: "},
+		{4, L"Debug: "},
+		{5, L"Trace: "},
+		{6, L"Test: "}
+		};
+
+	return levelNames[level];
+
+	assert(false);
 	return L"";
 }
 
-wchar_t * AMFTraceImpl::FormMessage(amf_int32 level, const wchar_t *src_path, amf_int32 line, const wchar_t * message, va_list * pArglist)
+std::wstring AMFTraceImpl::FormMessage
+(
+	amf_int32 			level,
+	const wchar_t *		srcPath,
+	amf_int32 			srcLine,
+	const wchar_t * 	message,
+	va_list * 			pArglist
+)
 {
-	wchar_t * messageBuffer = NULL;
-	size_t size = 0;
-	if (pArglist)
+	auto levelString = GetWriterLevelName(level);
+	size_t srcPathSize = wcslen(srcPath);
+
+	std::wstring result;
+	result.reserve(levelString.length() + srcPathSize + 1024 + 4);
+
+	result += levelString;
+
+	if(srcPathSize)
 	{
-		messageBuffer = new wchar_t[1024];
-		vswprintf(messageBuffer, (size_t)1024, message, *pArglist);
-		size = wcslen(messageBuffer) + 1;
-	}
-	else
-		size = wcslen(message) + 1;
-
-	const wchar_t* const levelString = GetWriterLevelName(level);
-	size_t levelSize = wcslen(levelString);
-	size_t srsPathSize = wcslen(src_path);
-
-	wchar_t * lineString = new wchar_t [32 + 3];
-	size_t lineStringSize = 0;
-	if (srsPathSize > 0) {
-		swprintf(lineString, 32 + 3, L"(%d) ", line);
-		lineStringSize = wcslen(lineString);
+		result += srcPath;
+		result += L" (" + std::to_wstring(srcLine) + L") ";
 	}
 
-	wchar_t * result = new wchar_t[size + levelSize + srsPathSize + lineStringSize];
+	result += L" ";
 
-	amf_int32 current = 0;
-	wcscpy(result + current, levelString);
-	current += levelSize;
-
-	if (srsPathSize) {
-		wcscpy(result + current, src_path);
-		current += srsPathSize;
-
-		wcscpy(result + current, lineString);
-		current += lineStringSize;
-	}
-	if (pArglist)
+	if(pArglist)
 	{
-		wcscpy(result + current, messageBuffer);
+		wchar_t buffer[1024] = {0};
+		std::vswprintf(buffer, 1024, message, *pArglist);
+		result += buffer;
 	}
 	else
 	{
-		wcscpy(result + current, message);
+		result += message;
 	}
+
 	return result;
 }
 
@@ -542,8 +530,7 @@ void AMFTraceImpl::Trace(const wchar_t *src_path, amf_int32 line, amf_int32 leve
 	if (!CheckLevel(m_level, level))
 		return;
 
-
-	wchar_t * result_message = FormMessage(level, src_path, line, message, pArglist);
+	auto resultMessage = FormMessage(level, src_path, line, message, pArglist);
 
 	if (m_consoleEx.enable && CheckLevel(m_consoleEx.level, level))
 	{
@@ -576,9 +563,8 @@ void AMFTraceImpl::Trace(const wchar_t *src_path, amf_int32 line, amf_int32 leve
 				continue;
 		}
 
-		iter->second.pWriter->Write(scope, result_message);
+		iter->second.pWriter->Write(scope, resultMessage.c_str());
 	}
-	free(result_message);
 }
 
 void AMFTraceImpl::TraceW(const wchar_t *src_path, amf_int32 line, amf_int32 level, const wchar_t *scope, amf_int32 countArgs, const wchar_t *format, ...)
